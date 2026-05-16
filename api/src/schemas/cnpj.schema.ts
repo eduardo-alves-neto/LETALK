@@ -1,12 +1,16 @@
 import { z } from "zod";
 import { cnpj } from "cpf-cnpj-validator";
+import { normalizeCnpj } from "../utils/data-transformer";
 
 export const cnpjParamSchema = z.object({
   cnpj: z
-    .string()
-    .min(14, "CNPJ deve ter no mínimo 14 caracteres")
-    .max(18, "CNPJ inválido")
-    .refine((val) => cnpj.isValid(val), "CNPJ inválido (dígito verificador incorreto)"),
+    .string({ message: "CNPJ é obrigatório" })
+    .min(1, "CNPJ é obrigatório")
+    .transform(normalizeCnpj)
+    .pipe(
+      z
+        .string()
+        .length(14, "CNPJ deve ter 14 dígitos")
+        .refine((val) => cnpj.isValid(val), "CNPJ inválido (dígito verificador incorreto)"),
+    ),
 });
-
-export type CnpjParam = z.infer<typeof cnpjParamSchema>;

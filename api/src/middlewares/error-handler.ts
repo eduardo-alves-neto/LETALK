@@ -1,28 +1,37 @@
 import { Request, Response, NextFunction } from "express";
+import { treeifyError, ZodError } from "zod";
 import { AppError } from "../utils/app-error";
+import { buildErrorEnvelope } from "../utils/http-response";
 
-export function errorHandler(
-  err: Error,
-  req: Request,
-  res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction,
-) {
-  console.error(`[ERRO] ${req.method} ${req.url}`, err);
+export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+  if (res.headersSent) return next(err);
 
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      error: {
+    return res.status(err.statusCode).json(
+      buildErrorEnvelope({
         code: err.code,
         message: err.message,
-      },
-    });
+        details: err.details,
+      }),
+    );
   }
 
-  return res.status(500).json({
-    error: {
+  if (err instanceof ZodError) {
+    return res.status(400).json(
+      buildErrorEnvelope({
+        code: "VALIDATION_ERROR",
+        message: "Dados inválidos",
+        details: treeifyError(err),
+      }),
+    );
+  }
+
+  console.error(`[ERRO] ${req.method} ${req.url}`, err);
+
+  return res.status(500).json(
+    buildErrorEnvelope({
       code: "INTERNAL_SERVER_ERROR",
       message: "Erro interno do servidor",
-    },
-  });
+    }),
+  );
 }

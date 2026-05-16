@@ -1,147 +1,68 @@
-import {
-  IBrasilApiCnpjResponse,
-  IBrasilApiPartner,
-} from "../types/brasilapi.types";
-import {
-  ICompanyResponse,
-  ICompanyStatus,
-  IPartner,
-  StatusColor,
-} from "../types/company.types";
-import { formatCnpj } from "./cnpj-validator";
-import { mapCompanySize } from "./company-size-mapper";
+import { BrasilApiCnpjResponse, BrasilApiPartner } from "../types/brasilapi.types";
+import { CompanyPartner, CompanyResponse } from "../types/company.types";
 
-export function transformBrasilApiResponse(
-  raw: IBrasilApiCnpjResponse,
-): ICompanyResponse {
+export function transformBrasilApiResponse(raw: BrasilApiCnpjResponse): CompanyResponse {
   return {
-    raw_cnpj: formatCnpj(raw.cnpj),
-
+    cnpj: normalizeCnpj(raw.cnpj),
     company: {
-      name: capitalizeWords(raw.razao_social),
-      trade_name: raw.nome_fantasia ? capitalizeWords(raw.nome_fantasia) : null,
-      status: mapStatus(raw.descricao_situacao_cadastral),
-      age_years: calculateYearsSince(raw.data_inicio_atividade),
-      founded_at: raw.data_inicio_atividade,
-      size: mapCompanySize(raw.porte),
-      tax_regime: mapTaxRegime(raw),
-      legal_nature: raw.natureza_juridica,
-      share_capital: raw.capital_social,
+      name: raw.razao_social,
+      tradeName: raw.nome_fantasia ?? null,
+      statusCode: raw.situacao_cadastral,
+      statusDescription: raw.descricao_situacao_cadastral,
+      branchCode: raw.identificador_matriz_filial ?? null,
+      branchLabel: raw.descricao_identificador_matriz_filial ?? null,
+      foundedAt: raw.data_inicio_atividade,
+      sizeCode: raw.codigo_porte,
+      sizeDescription: raw.descricao_porte,
+      legalNature: raw.natureza_juridica,
+      shareCapital: raw.capital_social,
+      isMei: raw.opcao_pelo_mei,
+      isSimples: raw.opcao_pelo_simples,
+      taxRegimeHistory:
+        raw.regime_tributario?.map((r) => ({
+          year: r.ano,
+          taxation: r.forma_de_tributacao,
+        })) ?? [],
     },
-
     activity: {
-      main: {
-        code: formatCnaeCode(raw.cnae_fiscal),
-        description: raw.cnae_fiscal_descricao,
-      },
+      main: { code: raw.cnae_fiscal, description: raw.cnae_fiscal_descricao },
       secondary: raw.cnaes_secundarios.map((c) => ({
-        code: formatCnaeCode(c.codigo),
+        code: c.codigo,
         description: c.descricao,
       })),
     },
-
     location: {
-      full_address: buildFullAddress(raw),
-      zip_code: formatCep(raw.cep),
-      street: raw.logradouro,
-      number: raw.numero,
-      complement: raw.complemento,
-      neighborhood: raw.bairro,
-      city: capitalizeWords(raw.municipio),
+      zipCode: raw.cep,
+      streetType: raw.descricao_tipo_de_logradouro ?? null,
+      street: raw.logradouro ?? "",
+      number: raw.numero ?? "",
+      complement: raw.complemento ?? "",
+      neighborhood: raw.bairro ?? "",
+      city: raw.municipio ?? "",
       state: raw.uf,
+      country: raw.pais ?? null,
     },
-
     contact: {
-      phone: formatPhone(raw.ddd_telefone_1),
-      email: raw.email?.toLowerCase() ?? null,
+      phone: raw.ddd_telefone_1 ?? null,
+      secondaryPhone: raw.ddd_telefone_2 ?? null,
+      email: raw.email ?? null,
     },
-
     partners: (raw.qsa ?? []).map(mapPartner),
   };
 }
 
-function mapPartner(p: IBrasilApiPartner): IPartner {
-  const legalRep =
-    p.nome_representante_legal && p.nome_representante_legal.trim().length > 0
-      ? capitalizeWords(p.nome_representante_legal)
-      : null;
-
+function mapPartner(p: BrasilApiPartner): CompanyPartner {
+  const rep = p.nome_representante_legal?.trim();
   return {
-    name: capitalizeWords(p.nome_socio),
+    name: p.nome_socio,
     role: p.qualificacao_socio,
-    age_range: p.faixa_etaria ?? null,
-    joined_at: p.data_entrada_sociedade,
-    tax_id: p.cnpj_cpf_do_socio ?? null,
-    legal_representative: legalRep,
+    ageRange: p.faixa_etaria ?? null,
+    joinedAt: p.data_entrada_sociedade,
+    taxId: p.cnpj_cpf_do_socio ?? null,
+    legalRepresentative: rep && rep.length > 0 ? rep : null,
   };
 }
 
-function capitalizeWords(text: string): string {
-  return text
-    .toLowerCase()
-    .split(" ")
-    .map((w) => (w.length > 2 ? w[0].toUpperCase() + w.slice(1) : w))
-    .join(" ");
-}
-
-function calculateYearsSince(dateStr: string): number {
-  const start = new Date(dateStr);
-  const now = new Date();
-  return now.getFullYear() - start.getFullYear();
-}
-
-function mapStatus(description: string): ICompanyStatus {
-  const code = description.toUpperCase();
-  const colorMap: Record<string, StatusColor> = {
-    ATIVA: "green",
-    SUSPENSA: "yellow",
-    INAPTA: "yellow",
-    BAIXADA: "red",
-    NULA: "red",
-  };
-  return {
-    code,
-    label: capitalizeWords(description),
-    color: colorMap[code] ?? "gray",
-  };
-}
-
-function mapTaxRegime(raw: IBrasilApiCnpjResponse): string {
-  if (raw.opcao_pelo_mei) return "MEI";
-  if (raw.opcao_pelo_simples) return "Simples Nacional";
-  return "Lucro Real/Presumido";
-}
-
-function formatCnaeCode(code: number | string): string {
-  const str = String(code).padStart(7, "0");
-  return `${str.slice(0, 4)}-${str.slice(4, 5)}/${str.slice(5)}`;
-}
-
-function formatCep(cep: string): string {
-  const digits = (cep ?? "").replace(/\D/g, "");
-  return digits.length === 8 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : cep;
-}
-
-function formatPhone(phone: string | null): string | null {
-  if (!phone) return null;
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length === 11) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-  }
-  if (digits.length === 10) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
-  }
-  return phone;
-}
-
-function buildFullAddress(raw: IBrasilApiCnpjResponse): string {
-  const parts = [
-    raw.logradouro ? capitalizeWords(raw.logradouro) : "",
-    raw.numero,
-    raw.complemento ? capitalizeWords(raw.complemento) : "",
-    raw.bairro ? capitalizeWords(raw.bairro) : "",
-    `${capitalizeWords(raw.municipio)}/${raw.uf}`,
-    formatCep(raw.cep),
-  ].filter(Boolean);
-  return parts.join(", ");
+export function normalizeCnpj(input: string | null | undefined): string {
+  return (input ?? "").replace(/\D/g, "");
 }

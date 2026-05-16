@@ -1,26 +1,25 @@
-import axios, { AxiosError } from "axios";
-import { IBrasilApiCnpjResponse } from "../types/brasilapi.types";
+import axios, { AxiosError, AxiosInstance } from "axios";
+import { BrasilApiCnpjResponse } from "../types/brasilapi.types";
 import { CnpjNotFoundError, ExternalServiceError } from "../utils/app-error";
+import { env } from "../config/env";
 
-const BRASIL_API_BASE_URL = "https://brasilapi.com.br/api/cnpj/v1";
-const REQUEST_TIMEOUT_MS = 10_000;
-
-const httpClient = axios.create({
-  baseURL: BRASIL_API_BASE_URL,
-  timeout: REQUEST_TIMEOUT_MS,
+const httpClient: AxiosInstance = axios.create({
+  baseURL: env.BRASIL_API_BASE_URL,
+  timeout: env.BRASIL_API_TIMEOUT_MS,
   headers: {
     Accept: "application/json",
-    "User-Agent": "letalk-cnpj-challenge/1.0",
   },
 });
 
-export async function fetchCnpjFromBrasilApi(cnpj: string): Promise<IBrasilApiCnpjResponse> {
+export async function fetchCnpjFromBrasilApi(cnpj: string): Promise<BrasilApiCnpjResponse> {
   try {
-    const response = await httpClient.get<IBrasilApiCnpjResponse>(`/${cnpj}`);
+    const response = await httpClient.get<BrasilApiCnpjResponse>(`/${cnpj}`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      if (error.response?.status === 404) {
+      const status = error.response?.status;
+
+      if (status === 404) {
         throw new CnpjNotFoundError("CNPJ não encontrado na base da Receita Federal");
       }
 
@@ -28,7 +27,7 @@ export async function fetchCnpjFromBrasilApi(cnpj: string): Promise<IBrasilApiCn
         throw new ExternalServiceError("Tempo de resposta excedido ao consultar BrasilAPI");
       }
 
-      if (error.response && error.response.status >= 500) {
+      if (status && status >= 500) {
         throw new ExternalServiceError("BrasilAPI temporariamente indisponível");
       }
 
@@ -36,7 +35,6 @@ export async function fetchCnpjFromBrasilApi(cnpj: string): Promise<IBrasilApiCn
         throw new ExternalServiceError("Erro de conexão com BrasilAPI");
       }
     }
-
     throw error;
   }
 }
