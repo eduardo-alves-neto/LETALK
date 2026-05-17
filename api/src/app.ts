@@ -9,11 +9,7 @@ import { sendSuccess } from "./utils/http-response";
 export function createApp() {
   const app = express();
 
-  app.use(
-    cors({
-      origin: env.CORS_ORIGINS?.split(",").map((o) => o.trim()),
-    }),
-  );
+  app.use(cors({ origin: env.CORS_ORIGINS }));
 
   app.use(express.json());
 
