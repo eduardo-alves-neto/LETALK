@@ -1,3 +1,4 @@
+import type { ErrorCode } from "@/constants/error-codes";
 export interface CompanyActivity {
   code: number;
   description: string;
@@ -68,15 +69,15 @@ export interface SuccessEnvelope<T> {
 }
 
 export interface ApiErrorBody {
-  error: { code: string; message: string; details?: unknown };
+  error: { code: ErrorCode; message: string; details?: unknown };
 }
 
 export class ApiError extends Error {
-  code: string;
+  code: ErrorCode;
   status: number;
   details?: unknown;
-  constructor(code: string, message: string, status: number, details?: unknown) {
-    super(message);
+  constructor(code: ErrorCode, status: number, details?: unknown) {
+    super(code);
     this.code = code;
     this.status = status;
     this.details = details;
