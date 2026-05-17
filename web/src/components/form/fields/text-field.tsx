@@ -14,7 +14,10 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
   const inputId = id ?? rest.name;
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={inputId} className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <Label
+        htmlFor={inputId}
+        className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+      >
         {label}
         {required && <span className="ml-1 text-destructive">*</span>}
       </Label>

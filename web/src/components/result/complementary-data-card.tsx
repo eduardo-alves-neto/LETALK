@@ -44,7 +44,10 @@ export function ComplementaryDataCard({
     });
   }
 
-  const [activeKey, setActiveKey] = useState<TabKey>(tabs[0].key);
+  const [activeKey, setActiveKey] = useState<TabKey | undefined>(tabs[0]?.key);
+
+  if (!tabs.length) return null;
+
   const active = tabs.find((t) => t.key === activeKey) ?? tabs[0];
 
   return (

@@ -6,7 +6,7 @@ export function Footer() {
           &quot;Letalk&quot;, logotipo e demais elementos visuais da marca são
           propriedade da Letalk e protegidos por direitos autorais e marca
           registrada. Uso aqui exclusivamente para fins ilustrativos no contexto
-          de desafio técnico de portfólio, sem vínculo comercial.
+          de desafio técnico de portfólio.
         </p>
       </div>
     </footer>
