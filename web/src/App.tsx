@@ -27,9 +27,11 @@ function App() {
         <Header />
 
         <main className="container relative z-10 mx-auto w-full max-w-5xl flex-1 px-4 py-8  sm:px-6">
-          {isSuccess ? (
+          {isSuccess && data && variables ? (
             <CompactSearchBar
-              companyName={variables?.name || "Não informado"}
+              companyName={variables.name || "Não informado"}
+              data={data}
+              lead={variables}
               onNewSearch={reset}
             />
           ) : (
