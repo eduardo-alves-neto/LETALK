@@ -52,7 +52,7 @@ export function ContactLocationCard({
                   value={
                     <a
                       href={`mailto:${contact.email}`}
-                      className="hover:text-brand-primary"
+                      className="break-all hover:text-brand-primary"
                     >
                       {contact.email}
                     </a>

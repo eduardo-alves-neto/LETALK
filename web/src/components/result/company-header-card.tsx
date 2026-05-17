@@ -48,7 +48,7 @@ export function CompanyHeaderCard({ company, cnpj }: CompanyHeaderCardProps) {
       <div className="flex flex-col gap-4 px-6 pt-6 pb-5 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:pt-7">
         <div className="min-w-0 flex-1">
           <SectionLabel>01 · Identificação</SectionLabel>
-          <h2 className="mt-1 text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
+          <h2 className="mt-1 break-words text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
             {company.tradeName || company.name}
           </h2>
           {company.tradeName && company.tradeName !== company.name && (
