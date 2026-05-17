@@ -40,14 +40,14 @@ export function LeadForm({ onSubmit, isPending }: Props) {
         >
           <div className="grid gap-3 grid-cols-1">
             <TextField
-              label="Nome do contato"
+              label="Nome"
               placeholder="João da Silva"
               {...register("name")}
               error={formState.errors.name?.message}
             />
             <div className="grid gap-3 sm:grid-cols-2">
               <TextField
-                label="E-mail do contato"
+                label="E-mail"
                 type="email"
                 placeholder="joao@empresa.com"
                 {...register("email")}
@@ -63,7 +63,7 @@ export function LeadForm({ onSubmit, isPending }: Props) {
           </div>
 
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-            <PhoneField name="phone" label="Telefone do contato" />
+            <PhoneField name="phone" label="Telefone" />
             <CnpjField name="cnpj" label="CNPJ da empresa" required />
           </div>
 
