@@ -35,7 +35,7 @@ LETALK/
 ### 1. Clonar
 
 ```bash
-git clone <url-do-repo>
+git clone https://github.com/eduardo-alves-neto/LETALK.git
 cd LETALK
 ```
 
