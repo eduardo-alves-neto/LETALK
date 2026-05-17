@@ -9,7 +9,6 @@ import { LoadingSkeleton } from "@/components/feedback/loading-skeleton";
 import { Toaster } from "@/components/ui/sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCnpjLookup } from "@/hooks/use-cnpj-lookup";
-import type { LeadFormData } from "./schemas/form.schema";
 
 function App() {
   const {
@@ -20,14 +19,6 @@ function App() {
     data,
     variables,
   } = useCnpjLookup();
-
-  const onSubmit = (data: LeadFormData) => {
-    const cleanedData = {
-      ...data,
-      cnpj: data.cnpj.replace(/\D/g, ""),
-    };
-    search(cleanedData);
-  };
 
   return (
     <ScrollArea className="h-screen w-full bg-card">
@@ -44,7 +35,7 @@ function App() {
           ) : (
             <div className="grid items-start gap-8 py-8 lg:grid-cols-2 lg:gap-12 lg:py-16">
               <FormIntro />
-              <LeadForm onSubmit={onSubmit} disabled={isPending} />
+              <LeadForm onSubmit={search} isPending={isPending} />
             </div>
           )}
 

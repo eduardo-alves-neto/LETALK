@@ -11,10 +11,10 @@ import { DEFAULT_VALUES, LETALK_DEMO } from "@/constants/default-form-values";
 
 type Props = {
   onSubmit: (data: LeadFormData) => void;
-  disabled?: boolean;
+  isPending?: boolean;
 };
 
-export function LeadForm({ onSubmit, disabled }: Props) {
+export function LeadForm({ onSubmit, isPending }: Props) {
   const form = useForm<LeadFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: DEFAULT_VALUES,
@@ -30,7 +30,8 @@ export function LeadForm({ onSubmit, disabled }: Props) {
   return (
     <FormProvider {...form}>
       <Card
-        className={`p-6 sm:p-8 shadow-sm transition ${disabled ? "opacity-60 pointer-events-none" : ""}`}
+        aria-busy={isPending}
+        className={`p-6 sm:p-8 shadow-sm transition ${isPending ? "opacity-60 pointer-events-none" : ""}`}
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -61,22 +62,22 @@ export function LeadForm({ onSubmit, disabled }: Props) {
             </div>
           </div>
 
-          <div className="grid gap-4 grid-cols-2">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             <PhoneField name="phone" label="Telefone do contato" />
             <CnpjField name="cnpj" label="CNPJ da empresa" required />
           </div>
 
           <button
             type="submit"
-            disabled={disabled || formState.isSubmitting}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-primary px-6 py-3.5 text-base font-medium text-white shadow-md transition-all hover:bg-brand-primary-dark hover:shadow-lg disabled:opacity-60 cursor-pointer"
+            disabled={isPending || formState.isSubmitting}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-primary px-6 py-3.5 text-base font-medium text-white shadow-md transition-all hover:bg-brand-primary-dark hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/40 focus-visible:ring-offset-2 disabled:opacity-60 cursor-pointer"
           >
-            {disabled && <Loader2 className="h-4 w-4 animate-spin" />}
-            {disabled ? "Consultando Receita..." : "Qualificar lead"}
+            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isPending ? "Consultando Receita..." : "Qualificar lead"}
           </button>
         </form>
 
-        <div className="mt-3 flex flex-col items-center gap-3 border-t border-border pt-5 text-sm text-muted-foreground cursor-pointer">
+        <div className="mt-3 flex flex-col items-center gap-3 border-t border-border pt-5 text-sm text-muted-foreground">
           <Button
             type="button"
             variant="ghost"

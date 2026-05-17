@@ -8,7 +8,7 @@ export const formSchema = z.object({
     .trim()
     .optional()
     .refine(
-      (v) => !v || z.string().email().safeParse(v).success,
+      (v) => !v || z.email().safeParse(v).success,
       "E-mail inválido",
     ),
   phone: z

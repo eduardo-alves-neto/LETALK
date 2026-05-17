@@ -4,7 +4,7 @@ import { InfoItem } from "./info-item";
 import { SectionHeading } from "./section-label";
 import type { LeadFormData } from "@/schemas/form.schema";
 
-const FALBACK_VALUE = "Não informado";
+const FALLBACK_VALUE = "Não informado";
 
 export function LeadDataCard({ lead }: { lead: LeadFormData }) {
   return (
@@ -14,21 +14,21 @@ export function LeadDataCard({ lead }: { lead: LeadFormData }) {
         Informados no formulário.
       </p>
       <div className="divide-y divide-border">
-        <InfoItem icon={User} label="Nome" value={lead.name || FALBACK_VALUE} />
+        <InfoItem icon={User} label="Nome" value={lead.name || FALLBACK_VALUE} />
         <InfoItem
           icon={Mail}
           label="Email pessoal"
-          value={lead.email || FALBACK_VALUE}
+          value={lead.email || FALLBACK_VALUE}
         />
         <InfoItem
           icon={Phone}
           label="Telefone pessoal"
-          value={lead.phone || FALBACK_VALUE}
+          value={lead.phone || FALLBACK_VALUE}
         />
         <InfoItem
           icon={Briefcase}
           label="Cargo"
-          value={lead.role || FALBACK_VALUE}
+          value={lead.role || FALLBACK_VALUE}
         />
       </div>
     </Card>

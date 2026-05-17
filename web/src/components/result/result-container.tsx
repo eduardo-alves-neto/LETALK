@@ -24,7 +24,6 @@ export function ResultContainer({ data, lead }: ResultContainerProps) {
       <ContactLocationCard contact={data.contact} location={data.location} />
 
       <ComplementaryDataCard
-        company={data.company}
         partners={data.partners}
         secondaryCnaes={data.activity.secondary}
       />

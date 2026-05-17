@@ -7,7 +7,6 @@ import type { CompanyResponse } from "@/types/company.types";
 import { SectionHeading } from "./section-label";
 
 interface ComplementaryDataCardProps {
-  company: CompanyResponse["company"];
   partners: CompanyResponse["partners"];
   secondaryCnaes: CompanyResponse["activity"]["secondary"];
 }
@@ -59,10 +58,15 @@ export function ComplementaryDataCard({
         />
       </div>
 
-      <div className="mt-5 flex gap-1 border-b border-border px-6 sm:px-8 ">
+      <div
+        role="tablist"
+        aria-label="Dados complementares"
+        className="mt-5 flex gap-1 border-b border-border px-6 sm:px-8 "
+      >
         {tabs.map((t) => (
           <TabButton
             key={t.key}
+            tabKey={t.key}
             label={t.label}
             count={t.count}
             isActive={t.key === activeKey}
@@ -71,17 +75,26 @@ export function ComplementaryDataCard({
         ))}
       </div>
 
-      <div className="px-6 py-6 sm:px-8">{active.render()}</div>
+      <div
+        role="tabpanel"
+        id={`tabpanel-${active.key}`}
+        aria-labelledby={`tab-${active.key}`}
+        className="px-6 py-6 sm:px-8"
+      >
+        {active.render()}
+      </div>
     </Card>
   );
 }
 
 function TabButton({
+  tabKey,
   label,
   count,
   isActive,
   onClick,
 }: {
+  tabKey: TabKey;
   label: string;
   count?: number;
   isActive: boolean;
@@ -91,7 +104,10 @@ function TabButton({
     <button
       type="button"
       role="tab"
+      id={`tab-${tabKey}`}
+      aria-controls={`tabpanel-${tabKey}`}
       aria-selected={isActive}
+      tabIndex={isActive ? 0 : -1}
       onClick={onClick}
       className={cn(
         "relative flex items-center gap-2 whitespace-nowrap px-3 py-3 text-sm font-medium transition cursor-pointer",

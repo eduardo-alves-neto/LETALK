@@ -3,13 +3,13 @@ export const LETALK_DEMO = {
   email: "letalk@example.com",
   phone: "(31) 99554-4441",
   cnpj: "47.095.639/0001-61",
-  role: "",
+  role: "CEO",
 } as const;
 
 export const DEFAULT_VALUES = {
   name: "",
-  email: '',
-  phone: undefined,
+  email: "",
+  phone: "",
   cnpj: "",
   role: "",
 } as const;

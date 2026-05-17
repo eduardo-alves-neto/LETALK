@@ -6,15 +6,19 @@ import type { LeadFormData } from "@/schemas/form.schema";
 import { ERROR_MESSAGES } from "@/constants/errors";
 import { ERROR_CODES, type ErrorCode } from "@/constants/error-codes";
 
+function resolveErrorCode(error: unknown): ErrorCode {
+  if (error instanceof ApiError && error.code in ERROR_MESSAGES) {
+    return error.code;
+  }
+  return ERROR_CODES.UNKNOWN;
+}
+
 export function useCnpjLookup() {
   const mutation = useMutation<CompanyResponse, ApiError, LeadFormData>({
-    mutationFn: (formData) => SearchDocument.byCnpj(formData.cnpj),
+    mutationFn: (formData) =>
+      SearchDocument.byCnpj(formData.cnpj.replace(/\D/g, "")),
     onError: (error) => {
-      const code: ErrorCode =
-        error instanceof ApiError
-          ? (error.code as ErrorCode)
-          : ERROR_CODES.UNKNOWN;
-      const info = ERROR_MESSAGES[code] ?? ERROR_MESSAGES.UNKNOWN;
+      const info = ERROR_MESSAGES[resolveErrorCode(error)];
       toast.error(info.title, { description: info.message });
     },
   });
