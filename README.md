@@ -5,7 +5,7 @@
 | Recurso            | URL                                 |
 | ------------------ | ----------------------------------- |
 | Frontend           | https://letalk-desafio.netlify.app/ |
-| API                | https://letalk-13id.onrender.com    |
+| API                | https://letalk-13id.onrender.com/api/v1/health   |
 | Endpoint principal | `GET /api/v1/cnpj/:cnpj`            |
 | Healthcheck        | `GET /api/v1/health`                |
 
