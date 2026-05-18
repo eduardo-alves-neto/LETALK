@@ -2,12 +2,12 @@ import { forwardRef, type InputHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
-type Props = InputHTMLAttributes<HTMLInputElement> & {
+interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
-};
+}
 
-export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   { label, error, id, className, required, ...rest },
   ref,
 ) {

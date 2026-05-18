@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { SectionLabel } from "./section-label";
 
-type Props = {
+interface InfoItemProps {
   icon: LucideIcon;
   label: string;
   value: ReactNode;
@@ -11,7 +11,7 @@ type Props = {
   hint?: string | null;
   variant?: "tile" | "row";
   mono?: boolean;
-};
+}
 
 export function InfoItem({
   icon: Icon,
@@ -21,7 +21,7 @@ export function InfoItem({
   hint,
   variant = "row",
   mono = false,
-}: Props) {
+}: InfoItemProps) {
   const isTile = variant === "tile";
 
   return (

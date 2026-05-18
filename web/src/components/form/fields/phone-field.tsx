@@ -2,15 +2,13 @@ import { Controller, useFormContext } from "react-hook-form";
 import { TextField } from "./text-field";
 import { maskPhone } from "@/lib/utils";
 
-export function PhoneField({
-  name,
-  label,
-  required,
-}: {
+interface PhoneFieldProps {
   name: string;
   label: string;
   required?: boolean;
-}) {
+}
+
+export function PhoneField({ name, label, required }: PhoneFieldProps) {
   const { control } = useFormContext();
   return (
     <Controller
