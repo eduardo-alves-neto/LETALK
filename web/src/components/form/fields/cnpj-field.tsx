@@ -2,13 +2,13 @@ import { Controller, useFormContext } from "react-hook-form";
 import { TextField } from "./text-field";
 import { cnpj } from "cpf-cnpj-validator";
 
-type Props = {
+interface CnpjFieldProps {
   name: string;
   label: string;
   required?: boolean;
-};
+}
 
-export function CnpjField({ name, label, required }: Props) {
+export function CnpjField({ name, label, required }: CnpjFieldProps) {
   const { control } = useFormContext();
   return (
     <Controller

@@ -9,12 +9,12 @@ import { Loader2, Target } from "lucide-react";
 import { Button } from "../ui/button";
 import { DEFAULT_VALUES, LETALK_DEMO } from "@/constants/default-form-values";
 
-type Props = {
+interface LeadFormProps {
   onSubmit: (data: LeadFormData) => void;
   isPending?: boolean;
-};
+}
 
-export function LeadForm({ onSubmit, isPending }: Props) {
+export function LeadForm({ onSubmit, isPending }: LeadFormProps) {
   const form = useForm<LeadFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: DEFAULT_VALUES,
